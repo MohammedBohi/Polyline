@@ -15,15 +15,56 @@ const MAX_POINTS = 10;
 let polyline // La polyline en cours de construction;
 
 const polylineMachine = createMachine(
-    {
+    {   
         /** @xstate-layout N4IgpgJg5mDOIC5gF8A0IB2B7CdGgAcsAbATwBkBLDMfEI2SgF0qwzoA9EBaANnVI9eAOgAM4iZMkB2ZGnokK1MMMoRitJAsYs2nRABYATAMQAOAIzCD0gJwXetgwGZezgw9ty5QA */
-        id: "polyLine",
-        initial: "idle",
+        id: "Contrôle continu Polyline",
+        initial: "Stat initial",
         states : {
-            idle: {
+            "Stat initial": {
+                on : {MOUSECLICK: {
+                        target: "Wait",
+                        actions: "createLine",
+                    
             }
         }
     },
+            "Wait" : { on: {
+                    "MOUSEMOVE": {
+                        target: "Wait",
+                        cond: pasPlein,
+                        actions: "setLastPoint",
+                    },
+
+                    "Escape": {
+                        target: "Initial state",
+                        cond: plusDeDeuxPoints,
+                        actions: {
+                            type: "abandon",
+                        },
+                    },
+                    "Enter IF=pasPlein and IF=plusDeDeuxPoints": {
+                        target: "Initial state",
+                        actions: {
+                            type: "saveLine",
+                        },
+                    },
+                    "MOUSECLICK IF=plein": {
+                        target: "Initial state",
+                        actions: {
+                            type: "saveLine",
+                        },
+                    },
+                    "MOUSECLICK IF=pasPlein": {
+                        target: "Wait",
+                        actions: {
+                            type: "addPoint",
+                        },
+                    }
+                },
+            }
+        },
+    },  
+                    
     // Quelques actions et guardes que vous pouvez utiliser dans votre machine
     {
         actions: {
@@ -83,14 +124,26 @@ const polylineMachine = createMachine(
             pasPlein: (context, event) => {
                 return polyline.points().length < MAX_POINTS * 2;
             },
+            plein: (context, event) => {
+                return polyline.points().length >= MAX_POINTS * 2;
+            },
             // On peut enlever un point
             plusDeDeuxPoints: (context, event) => {
                 // Deux coordonnées pour chaque point, plus le point provisoire
                 return polyline.points().length > 6;
             },
+            pasPleinEtPlusDeDeuxPoints: (context, event) => {
+                // Deux coordonnées pour chaque point, plus le point provisoire
+                if (polyline.points().length >= 6 && polyline.points().length < MAX_POINTS * 2) {
+                    return true;
+                } else {
+                    return false;
+                };
+            },
         },
     }
 );
+     
 
 // On démarre la machine
 const polylineService = interpret(polylineMachine)

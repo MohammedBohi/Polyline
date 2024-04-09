@@ -14,9 +14,10 @@ stage.add(dessin);
 stage.add(temporaire);
 
 
-let rubber; // La ligne provisoire
+let rubber; //  Test
+// La ligne provisoire
 
-// On énumère les états possibles
+// On énumère  les états possibles
 // Pas d'énumération en JavaScript, on utilise un objet
 const States = {
   IDLE: 0,
