@@ -15,7 +15,7 @@ const MAX_POINTS = 10;
 let polyline // La polyline en cours de construction;
 
 const polylineMachine = createMachine(
-    {   
+    {
         /** @xstate-layout N4IgpgJg5mDOIC5gF8A0IB2B7CdGgAcsAbATwBkBLDMfEI2SgF0qwzoA9EBaANnVI9eAOgAM4iZMkB2ZGnokK1MMMoRitJAsYs2nRABYATAMQAOAIzCD0gJwXetgwGZezgw9ty5QA */
         id: "Contrôle continu Polyline",
         initial: "Stat initial",
@@ -24,10 +24,10 @@ const polylineMachine = createMachine(
                 on : {MOUSECLICK: {
                         target: "Wait",
                         actions: "createLine",
-                    
-            }
-        }
-    },
+
+                    }
+                }
+            },
             "Wait" : { on: {
                     "MOUSEMOVE": {
                         target: "Wait",
@@ -63,8 +63,8 @@ const polylineMachine = createMachine(
                 },
             }
         },
-    },  
-                    
+    },
+
     // Quelques actions et guardes que vous pouvez utiliser dans votre machine
     {
         actions: {
@@ -118,6 +118,7 @@ const polylineMachine = createMachine(
                 polyline.points(oldPoints.concat(provisoire)); // Set the updated points to the line
                 layer.batchDraw(); // Redraw the layer to reflect the changes
             },
+
         },
         guards: {
             // On peut encore ajouter un point
@@ -143,7 +144,7 @@ const polylineMachine = createMachine(
         },
     }
 );
-     
+
 
 // On démarre la machine
 const polylineService = interpret(polylineMachine)
